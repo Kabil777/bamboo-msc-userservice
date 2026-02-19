@@ -5,6 +5,7 @@ import com.bamboo.userService.dto.UserPostDto;
 import com.bamboo.userService.dto.UserProfileDto;
 import com.bamboo.userService.dto.UserPutDto;
 import com.bamboo.userService.dto.feign.CursorResponse;
+import com.bamboo.userService.dto.feign.DocsCursorResponse;
 import com.bamboo.userService.feign.PostServiceClient;
 import com.bamboo.userService.service.UserService;
 
@@ -65,6 +66,13 @@ public class UserController {
     public ResponseEntity<CursorResponse> getProfileBlog(
             @RequestHeader("X-User-Id") UUID id, @RequestParam(required = false) Instant cursor) {
         CursorResponse response = postServiceClient.getBlogByUser(id, cursor);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile/me/docs")
+    public ResponseEntity<DocsCursorResponse> getProfileDocs(
+            @RequestHeader("X-User-Id") UUID id, @RequestParam(required = false) Instant cursor) {
+        DocsCursorResponse response = postServiceClient.getDocsByUser(id, cursor);
         return ResponseEntity.ok(response);
     }
 }

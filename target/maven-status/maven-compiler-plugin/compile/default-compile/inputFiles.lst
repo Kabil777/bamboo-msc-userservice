@@ -15,6 +15,8 @@
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/dto/UserPutDto.java
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/dto/feign/BlogPagesDto.java
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/dto/feign/CursorResponse.java
+/home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/dto/feign/DocHomeDto.java
+/home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/dto/feign/DocsCursorResponse.java
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/entity/Bookmark.java
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/entity/UserModel.java
 /home/kabil/personal/projects/msc/bamboo/userService/src/main/java/com/bamboo/userService/exception/GlobalExceptionHandler.java

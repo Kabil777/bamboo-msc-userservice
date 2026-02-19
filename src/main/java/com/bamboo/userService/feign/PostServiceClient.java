@@ -1,6 +1,7 @@
 package com.bamboo.userService.feign;
 
 import com.bamboo.userService.dto.feign.CursorResponse;
+import com.bamboo.userService.dto.feign.DocsCursorResponse;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,5 +15,9 @@ import java.util.UUID;
 public interface PostServiceClient {
     @GetMapping("/internal/blogs/user/{id}")
     CursorResponse getBlogByUser(
+            @PathVariable UUID id, @RequestParam(required = false) Instant cursor);
+
+    @GetMapping("/internal/docs/user/{id}")
+    DocsCursorResponse getDocsByUser(
             @PathVariable UUID id, @RequestParam(required = false) Instant cursor);
 }
