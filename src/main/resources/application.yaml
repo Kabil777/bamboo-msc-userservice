@@ -1,0 +1,24 @@
+server:
+  port: ${SERVER_PORT}
+blog:
+  service:
+    url: ${BLOG_SERVICE_URL}
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: userService
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: ${JPA_SHOW_SQL}
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        type:
+          json_format_mapper: com.bamboo.userService.common.helper.CustomHibernateJsonFormatter
