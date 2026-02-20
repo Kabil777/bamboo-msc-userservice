@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
 
     public Optional<UserModel> findByEmailIgnoreCase(String email);
 
+    public Optional<UserModel> findByHandleIgnoreCase(String handle);
+
     public boolean existsByHandle(String handle);
 
     public boolean existsByHandleAndIdNot(String handle, UUID id);

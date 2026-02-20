@@ -4,6 +4,7 @@ import com.bamboo.userService.dto.UserMetaDto;
 import com.bamboo.userService.dto.UserPostDto;
 import com.bamboo.userService.dto.UserProfileDto;
 import com.bamboo.userService.dto.UserPutDto;
+import com.bamboo.userService.common.enums.Visibility;
 import com.bamboo.userService.dto.feign.CursorResponse;
 import com.bamboo.userService.dto.feign.DocsCursorResponse;
 import com.bamboo.userService.feign.PostServiceClient;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
 import java.util.Map;
@@ -62,6 +64,11 @@ public class UserController {
         return userService.getProfile(userId);
     }
 
+    @GetMapping("/profile/{handle}")
+    public ResponseEntity<UserProfileDto> getProfileByHandle(@PathVariable String handle) {
+        return userService.getProfileByHandle(handle);
+    }
+
     @GetMapping("/profile/me/blogs")
     public ResponseEntity<CursorResponse> getProfileBlog(
             @RequestHeader("X-User-Id") UUID id, @RequestParam(required = false) Instant cursor) {
@@ -69,10 +76,28 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/profile/{handle}/blogs")
+    public ResponseEntity<CursorResponse> getProfileBlogByHandle(
+            @PathVariable String handle, @RequestParam(required = false) Instant cursor) {
+        UUID userId = userService.getUserByHandle(handle).getId();
+        CursorResponse response =
+                postServiceClient.getBlogByUserVisibility(userId, cursor, Visibility.PUBLIC);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/profile/me/docs")
     public ResponseEntity<DocsCursorResponse> getProfileDocs(
             @RequestHeader("X-User-Id") UUID id, @RequestParam(required = false) Instant cursor) {
         DocsCursorResponse response = postServiceClient.getDocsByUser(id, cursor);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile/{handle}/docs")
+    public ResponseEntity<DocsCursorResponse> getProfileDocsByHandle(
+            @PathVariable String handle, @RequestParam(required = false) Instant cursor) {
+        UUID userId = userService.getUserByHandle(handle).getId();
+        DocsCursorResponse response =
+                postServiceClient.getDocsByUserVisibility(userId, cursor, Visibility.PUBLIC);
         return ResponseEntity.ok(response);
     }
 }

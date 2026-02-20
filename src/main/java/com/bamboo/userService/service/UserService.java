@@ -118,6 +118,23 @@ public class UserService {
         return ResponseEntity.ok(profile);
     }
 
+    public ResponseEntity<UserProfileDto> getProfileByHandle(String handle) {
+        String normalized = normalizeHandle(handle);
+        UserProfileDto profile =
+                userRepository
+                        .findByHandleIgnoreCase(normalized)
+                        .map(UserMapper.mapProfile)
+                        .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return ResponseEntity.ok(profile);
+    }
+
+    public UserModel getUserByHandle(String handle) {
+        String normalized = normalizeHandle(handle);
+        return userRepository
+                .findByHandleIgnoreCase(normalized)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
     public ResponseEntity<BlogMetaDto> getUserByEmail(String email) {
         String normalizedEmail = email == null ? "" : email.trim();
 
