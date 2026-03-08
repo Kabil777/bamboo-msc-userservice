@@ -2,12 +2,12 @@ package com.bamboo.userService.service;
 
 import com.bamboo.userService.common.helper.BlankCheck;
 import com.bamboo.userService.dto.BlogMetaDto;
+import com.bamboo.userService.dto.ProvisionUserRequest;
 import com.bamboo.userService.dto.UserMetaDto;
 import com.bamboo.userService.dto.UserPostDto;
 import com.bamboo.userService.dto.UserProfileDto;
 import com.bamboo.userService.dto.UserPutDto;
 import com.bamboo.userService.entity.UserModel;
-import com.bamboo.userService.exception.customExceptions.DuplicateResourceException;
 import com.bamboo.userService.mappers.BlogUserDetailsMapper;
 import com.bamboo.userService.mappers.UserMapper;
 import com.bamboo.userService.repository.UserRepository;
@@ -41,32 +41,14 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Map<String, String>> saveData(
-            UUID userId,
-            String email,
-            String name,
-            String handle,
-            String avatar,
-            UserPostDto user) {
-
-        UserModel existingUser = userRepository.findById(userId).orElse(null);
-
-        if (existingUser != null) {
-            throw new DuplicateResourceException("User already exists with id: " + userId);
-        }
-
-        handle = handle.toLowerCase().replace(" ", "_");
+    public ResponseEntity<Map<String, String>> saveData(UUID userId, UserPostDto user) {
         UserModel userModel =
-                UserModel.builder()
-                        .id(userId)
-                        .name(name)
-                        .handle(handle)
-                        .email(email)
-                        .coverUrl(avatar)
-                        .description("")
-                        .designation(user.designation())
-                        .userProfile(user.userProfile())
-                        .build();
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userModel.setDesignation(user.designation());
+        userModel.setUserProfile(user.userProfile());
 
         userRepository.save(userModel);
         return ResponseEntity.ok(Map.of("profile", "created successfully"));
@@ -105,7 +87,49 @@ public class UserService {
     }
 
     private String normalizeHandle(String handle) {
+        if (handle == null) {
+            return "";
+        }
         return handle.toLowerCase().replace(" ", "_");
+    }
+
+    @Transactional
+    public ResponseEntity<BlogMetaDto> provisionUser(ProvisionUserRequest request) {
+        String resolvedName = resolveName(request.name(), request.email(), request.id());
+        UserModel userModel =
+                userRepository
+                        .findById(request.id())
+                        .orElseGet(
+                                () ->
+                                        UserModel.builder()
+                                                .id(request.id())
+                                                .name(resolvedName)
+                                                .email(request.email())
+                                                .handle(buildProvisionHandle(request))
+                                                .description("")
+                                                .coverUrl(
+                                                        request.coverUrl() != null
+                                                                        && !request.coverUrl()
+                                                                                .isBlank()
+                                                                ? request.coverUrl()
+                                                                : null)
+                                                .build());
+
+        userModel.setEmail(request.email());
+        userModel.setName(resolvedName);
+
+        if (userModel.getHandle() == null || userModel.getHandle().isBlank()) {
+            userModel.setHandle(buildProvisionHandle(request));
+        }
+
+        if ((userModel.getCoverUrl() == null || userModel.getCoverUrl().isBlank())
+                && request.coverUrl() != null
+                && !request.coverUrl().isBlank()) {
+            userModel.setCoverUrl(request.coverUrl());
+        }
+
+        userRepository.save(userModel);
+        return ResponseEntity.ok(BlogUserDetailsMapper.mapUser.apply(userModel));
     }
 
     public ResponseEntity<UserProfileDto> getProfile(UUID id) {
@@ -144,5 +168,56 @@ public class UserService {
                         .map(BlogUserDetailsMapper.mapUser)
                         .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return ResponseEntity.ok(userDetails);
+    }
+
+    public ResponseEntity<BlogMetaDto> getUserById(UUID id) {
+
+        BlogMetaDto userDetails =
+                userRepository
+                        .findById(id)
+                        .map(BlogUserDetailsMapper.mapUser)
+                        .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return ResponseEntity.ok(userDetails);
+    }
+
+    private String buildProvisionHandle(ProvisionUserRequest request) {
+        String preferred = request.handle();
+        if (preferred == null || preferred.isBlank()) {
+            preferred = request.name();
+        }
+        if (preferred == null || preferred.isBlank()) {
+            preferred = request.email() != null ? request.email().split("@")[0] : "user";
+        }
+
+        String normalized = preferred.toLowerCase().replace(" ", "_").replaceAll("[^a-z0-9_]", "");
+        if (normalized.isBlank()) {
+            normalized = "user";
+        }
+
+        String candidate = normalized + "_" + request.id().toString().substring(0, 8).toLowerCase();
+        while (userRepository.existsByHandleAndIdNot(candidate, request.id())) {
+            candidate = candidate + "x";
+        }
+        return candidate;
+    }
+
+    private String resolveName(String name, String email, UUID userId) {
+        if (name != null && !name.isBlank()) {
+            return name;
+        }
+        if (email != null && !email.isBlank()) {
+            return email.split("@")[0];
+        }
+        return "user_" + userId.toString().substring(0, 8).toLowerCase();
+    }
+
+    private String resolveRequestedHandle(String handle, String name, String email, UUID userId) {
+        String normalized = normalizeHandle(handle);
+        if (!normalized.isBlank()) {
+            return normalized;
+        }
+
+        ProvisionUserRequest request = new ProvisionUserRequest(userId, email, name, null, handle);
+        return buildProvisionHandle(request);
     }
 }

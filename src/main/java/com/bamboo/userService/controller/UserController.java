@@ -45,12 +45,8 @@ public class UserController {
     @PostMapping("/meta")
     public ResponseEntity<Map<String, String>> createUser(
             @RequestHeader("X-User-Id") UUID userId,
-            @RequestHeader("X-User-Email") String email,
-            @RequestHeader("X-User-Name") String name,
-            @RequestHeader("X-User-Handle") String handle,
-            @RequestHeader("X-User-Avatar") String avatar,
             @RequestBody UserPostDto userModel) {
-        return userService.saveData(userId, email, name, handle, avatar, userModel);
+        return userService.saveData(userId, userModel);
     }
 
     @PutMapping

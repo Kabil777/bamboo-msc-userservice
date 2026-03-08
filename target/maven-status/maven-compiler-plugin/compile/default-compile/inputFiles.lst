@@ -11,6 +11,7 @@
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/controller/InternalServiceController.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/controller/UserController.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/BlogMetaDto.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/ProvisionUserRequest.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserMetaDto.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserPostDto.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserProfileDto.java

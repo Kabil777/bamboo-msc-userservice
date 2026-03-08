@@ -1,22 +1,22 @@
 server:
-  port: ${SERVER_PORT:8091}
+  port: ${SERVER_PORT}
 blog:
   service:
-    url: ${BLOG_SERVICE_URL:http://localhost:8090}
+    url: ${BLOG_SERVICE_URL}
 spring:
   config:
     import: optional:file:.env[.properties]
   application:
     name: userService
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/user}
-    username: ${DB_USERNAME:kabi}
-    password: ${DB_PASSWORD:kabil@007}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
-    show-sql: ${JPA_SHOW_SQL:true}
+    show-sql: ${JPA_SHOW_SQL}
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}
+      ddl-auto: ${JPA_DDL_AUTO}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
