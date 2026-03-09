@@ -2,7 +2,8 @@ package com.bamboo.userService.controller;
 
 import com.bamboo.userService.dto.BlogMetaDto;
 import com.bamboo.userService.dto.ProvisionUserRequest;
-import com.bamboo.userService.service.UserService;
+import com.bamboo.userService.service.UserLookupService;
+import com.bamboo.userService.service.UserProvisioningService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,20 +22,21 @@ import java.util.UUID;
 @RequestMapping("/internal")
 @RequiredArgsConstructor
 public class InternalServiceController {
-    private final UserService userService;
+    private final UserLookupService userLookupService;
+    private final UserProvisioningService userProvisioningService;
 
     @GetMapping(value = "/user", params = "email")
     public ResponseEntity<BlogMetaDto> getUserByEmail(@RequestParam String email) {
-        return userService.getUserByEmail(email);
+        return ResponseEntity.ok(userLookupService.getUserByEmail(email));
     }
 
     @GetMapping(value = "/user/{id}")
     public ResponseEntity<BlogMetaDto> getUserById(@PathVariable UUID id) {
-        return userService.getUserById(id);
+        return ResponseEntity.ok(userLookupService.getUserById(id));
     }
 
     @PostMapping("/user/provision")
     public ResponseEntity<BlogMetaDto> provisionUser(@RequestBody ProvisionUserRequest request) {
-        return userService.provisionUser(request);
+        return ResponseEntity.ok(userProvisioningService.provisionUser(request));
     }
 }

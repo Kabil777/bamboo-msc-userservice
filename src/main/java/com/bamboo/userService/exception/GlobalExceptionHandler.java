@@ -51,10 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrityViolation(
             DataIntegrityViolationException ex, HttpServletRequest request) {
-        String message = "Database constraint violation";
-        if (ex.getRootCause() != null) {
-            message = ex.getRootCause().getMessage();
-        }
+        String message = resolveDataIntegrityMessage(ex);
 
         return buildError(HttpStatus.CONFLICT, message, request);
     }
@@ -86,5 +83,20 @@ public class GlobalExceptionHandler {
                         request.getRequestURI());
 
         return ResponseEntity.status(status).body(error);
+    }
+
+    private String resolveDataIntegrityMessage(DataIntegrityViolationException ex) {
+        String rawMessage =
+                ex.getRootCause() != null && ex.getRootCause().getMessage() != null
+                        ? ex.getRootCause().getMessage().toLowerCase()
+                        : ex.getMessage() == null ? "" : ex.getMessage().toLowerCase();
+
+        if (rawMessage.contains("handle")) {
+            return "Handle already taken";
+        }
+        if (rawMessage.contains("email")) {
+            return "Email already taken";
+        }
+        return "Database constraint violation";
     }
 }

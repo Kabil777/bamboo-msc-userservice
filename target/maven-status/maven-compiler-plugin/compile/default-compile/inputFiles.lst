@@ -8,6 +8,7 @@
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/common/helper/CustomHibernateJsonFormatter.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/common/model/UserProfile.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/common/response/ApiError.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/config/S3Config.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/controller/InternalServiceController.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/controller/UserController.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/BlogMetaDto.java
@@ -16,10 +17,12 @@
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserPostDto.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserProfileDto.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/UserPutDto.java
-/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/BlogPagesDto.java
-/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/CursorResponse.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/AuthorSummaryV1Dto.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/BlogCursorResponseV1Dto.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/BlogFeedItemV1Dto.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/DocCursorResponseV1Dto.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/DocFeedItemV1Dto.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/DocHomeDto.java
-/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/dto/feign/DocsCursorResponse.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/entity/Bookmark.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/entity/UserModel.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/exception/GlobalExceptionHandler.java
@@ -28,4 +31,8 @@
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/mappers/BlogUserDetailsMapper.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/mappers/UserMapper.java
 /home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/repository/UserRepository.java
-/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/UserService.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/HandleService.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/UserAvatarStorageService.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/UserLookupService.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/UserProfileService.java
+/home/kabil/personal/projects/msc/bamboo-repo/bamboo-msc-userservice/src/main/java/com/bamboo/userService/service/UserProvisioningService.java
