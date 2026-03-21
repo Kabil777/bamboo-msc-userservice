@@ -1,18 +1,21 @@
 package com.bamboo.userService.controller;
 
+import com.bamboo.userService.common.enums.Visibility;
 import com.bamboo.userService.dto.UserMetaDto;
 import com.bamboo.userService.dto.UserPostDto;
+import com.bamboo.userService.dto.UserCountSummaryDto;
 import com.bamboo.userService.dto.UserProfileDto;
 import com.bamboo.userService.dto.UserPutDto;
-import com.bamboo.userService.common.enums.Visibility;
 import com.bamboo.userService.dto.feign.BlogCursorResponseV1Dto;
 import com.bamboo.userService.dto.feign.DocCursorResponseV1Dto;
 import com.bamboo.userService.feign.PostServiceClient;
 import com.bamboo.userService.service.HandleService;
+import com.bamboo.userService.service.UserCountService;
 import com.bamboo.userService.service.UserProfileService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
 import java.util.Map;
@@ -31,14 +33,17 @@ import java.util.UUID;
 public class UserController {
 
     private final UserProfileService userProfileService;
+    private final UserCountService userCountService;
     private final HandleService handleService;
     private final PostServiceClient postServiceClient;
 
     public UserController(
             UserProfileService userProfileService,
+            UserCountService userCountService,
             HandleService handleService,
             PostServiceClient postServiceClient) {
         this.userProfileService = userProfileService;
+        this.userCountService = userCountService;
         this.handleService = handleService;
         this.postServiceClient = postServiceClient;
     }
@@ -50,8 +55,7 @@ public class UserController {
 
     @PostMapping("/meta")
     public ResponseEntity<Map<String, String>> createUser(
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestBody UserPostDto userModel) {
+            @RequestHeader("X-User-Id") UUID userId, @RequestBody UserPostDto userModel) {
         return ResponseEntity.ok(userProfileService.saveData(userId, userModel));
     }
 
@@ -71,6 +75,19 @@ public class UserController {
         return ResponseEntity.ok(userProfileService.getProfileByHandle(handle));
     }
 
+    @GetMapping("/profile/me/counts")
+    public ResponseEntity<UserCountSummaryDto> getProfileCounts(
+            @RequestHeader("X-User-Id") UUID userId) {
+        return ResponseEntity.ok(userCountService.getSummaryByUserId(userId));
+    }
+
+    @GetMapping("/profile/{handle}/counts")
+    public ResponseEntity<UserCountSummaryDto> getProfileCountsByHandle(
+            @PathVariable String handle,
+            @RequestHeader(value = "X-User-Id", required = false) UUID requesterId) {
+        return ResponseEntity.ok(userCountService.getSummaryByHandleForViewer(handle, requesterId));
+    }
+
     @GetMapping("/profile/me/blogs")
     public ResponseEntity<BlogCursorResponseV1Dto> getProfileBlog(
             @RequestHeader("X-User-Id") UUID id, @RequestParam(required = false) Instant cursor) {
@@ -80,10 +97,16 @@ public class UserController {
 
     @GetMapping("/profile/{handle}/blogs")
     public ResponseEntity<BlogCursorResponseV1Dto> getProfileBlogByHandle(
-            @PathVariable String handle, @RequestParam(required = false) Instant cursor) {
+            @PathVariable String handle,
+            @RequestParam(required = false) Instant cursor,
+            @RequestHeader(value = "X-User-Id", required = false) UUID requesterId) {
         UUID userId = handleService.getUserByHandle(handle).getId();
-        BlogCursorResponseV1Dto response =
-                postServiceClient.getBlogByUserVisibility(userId, cursor, Visibility.PUBLIC);
+        BlogCursorResponseV1Dto response;
+        if (requesterId != null && requesterId.equals(userId)) {
+            response = postServiceClient.getBlogByUser(userId, cursor);
+        } else {
+            response = postServiceClient.getBlogByUserVisibility(userId, cursor, Visibility.PUBLIC);
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -96,10 +119,16 @@ public class UserController {
 
     @GetMapping("/profile/{handle}/docs")
     public ResponseEntity<DocCursorResponseV1Dto> getProfileDocsByHandle(
-            @PathVariable String handle, @RequestParam(required = false) Instant cursor) {
+            @PathVariable String handle,
+            @RequestParam(required = false) Instant cursor,
+            @RequestHeader(value = "X-User-Id", required = false) UUID requesterId) {
         UUID userId = handleService.getUserByHandle(handle).getId();
-        DocCursorResponseV1Dto response =
-                postServiceClient.getDocsByUserVisibility(userId, cursor, Visibility.PUBLIC);
+        DocCursorResponseV1Dto response;
+        if (requesterId != null && requesterId.equals(userId)) {
+            response = postServiceClient.getDocsByUser(userId, cursor);
+        } else {
+            response = postServiceClient.getDocsByUserVisibility(userId, cursor, Visibility.PUBLIC);
+        }
         return ResponseEntity.ok(response);
     }
 }

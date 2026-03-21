@@ -8,6 +8,8 @@ import com.bamboo.userService.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 import java.util.UUID;
 
 @Service
@@ -16,17 +18,31 @@ public class UserProvisioningService {
     private final UserRepository userRepository;
     private final UserAvatarStorageService userAvatarStorageService;
     private final HandleService handleService;
+    private final UserCountService userCountService;
 
     public UserProvisioningService(
             UserRepository userRepository,
             UserAvatarStorageService userAvatarStorageService,
-            HandleService handleService) {
+            HandleService handleService,
+            UserCountService userCountService) {
         this.userRepository = userRepository;
         this.userAvatarStorageService = userAvatarStorageService;
         this.handleService = handleService;
+        this.userCountService = userCountService;
     }
 
+    @Transactional
     public BlogMetaDto provisionUser(ProvisionUserRequest request) {
+        if (request == null || request.id() == null) {
+            throw new IllegalArgumentException("User id is required");
+        }
+
+        if (userRepository.existsById(request.id())) {
+            userCountService.ensureExists(request.id());
+            UserModel existing = userRepository.findById(request.id()).orElseThrow();
+            return BlogUserDetailsMapper.mapUser.apply(existing);
+        }
+
         String resolvedName = resolveName(request.name(), request.email(), request.id());
         String resolvedCoverUrl =
                 userAvatarStorageService.storeExternalAvatar(request.coverUrl(), request.id());
@@ -43,7 +59,8 @@ public class UserProvisioningService {
                                                 .description("")
                                                 .coverUrl(
                                                         resolvedCoverUrl != null
-                                                                        && !resolvedCoverUrl.isBlank()
+                                                                        && !resolvedCoverUrl
+                                                                                .isBlank()
                                                                 ? resolvedCoverUrl
                                                                 : null)
                                                 .build());
@@ -62,6 +79,7 @@ public class UserProvisioningService {
         }
 
         userRepository.save(userModel);
+        userCountService.ensureExists(userModel.getId());
         return BlogUserDetailsMapper.mapUser.apply(userModel);
     }
 

@@ -40,7 +40,7 @@ public class HandleService {
             normalized = "user";
         }
 
-        return normalized + "_" + request.id().toString().substring(0, 8).toLowerCase();
+        return normalized + "_" + request.id().toString().substring(0, 4).toLowerCase();
     }
 
     public UserModel getUserByHandle(String handle) {

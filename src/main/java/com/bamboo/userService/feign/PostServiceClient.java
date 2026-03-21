@@ -1,8 +1,8 @@
 package com.bamboo.userService.feign;
 
+import com.bamboo.userService.common.enums.Visibility;
 import com.bamboo.userService.dto.feign.BlogCursorResponseV1Dto;
 import com.bamboo.userService.dto.feign.DocCursorResponseV1Dto;
-import com.bamboo.userService.common.enums.Visibility;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
