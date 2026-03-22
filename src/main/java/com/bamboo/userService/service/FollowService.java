@@ -73,6 +73,18 @@ public class FollowService {
         return Map.of("status", "deleted");
     }
 
+    @Transactional
+    public Map<String, String> followUserByHandle(UUID follower, String followingHandle) {
+        UUID followingId = getUserIdByHandle(followingHandle);
+        return followUser(follower, followingId);
+    }
+
+    @Transactional
+    public Map<String, String> unfollowUserByHandle(UUID follower, String followingHandle) {
+        UUID followingId = getUserIdByHandle(followingHandle);
+        return unfollowUser(follower, followingId);
+    }
+
     public List<FollowUserDto> getFollowersByHandle(String handle) {
         UUID userId = getUserIdByHandle(handle);
         List<UUID> followerIds =

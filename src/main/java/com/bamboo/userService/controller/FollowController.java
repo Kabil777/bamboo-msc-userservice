@@ -44,6 +44,22 @@ public class FollowController {
         return ResponseEntity.ok(followService.unfollowUser(followerId, followingId));
     }
 
+    @PostMapping("handle/{handle}/follow")
+    public ResponseEntity<Map<String, String>> addFollowerByHandle(
+            @PathVariable("handle") String handle, @RequestHeader("X-User-Id") UUID followerId) {
+        Map<String, String> result = followService.followUserByHandle(followerId, handle);
+        HttpStatus status =
+                "created".equals(result.get("status")) ? HttpStatus.CREATED : HttpStatus.OK;
+
+        return ResponseEntity.status(status).body(result);
+    }
+
+    @DeleteMapping("handle/{handle}/follow")
+    public ResponseEntity<Map<String, String>> removeFollowerByHandle(
+            @PathVariable("handle") String handle, @RequestHeader("X-User-Id") UUID followerId) {
+        return ResponseEntity.ok(followService.unfollowUserByHandle(followerId, handle));
+    }
+
     @GetMapping("{handle}/followers")
     public ResponseEntity<List<FollowUserDto>> getFollowers(@PathVariable String handle) {
         return ResponseEntity.ok(followService.getFollowersByHandle(handle));
