@@ -25,6 +25,10 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
 s3:
   bucket:
     name: spring-uploads

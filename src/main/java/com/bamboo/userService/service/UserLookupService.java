@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,6 +39,14 @@ public class UserLookupService {
                         .map(BlogUserDetailsMapper.mapUser)
                         .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return userDetails;
+    }
+
+    public List<BlogMetaDto> getUsersByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+
+        return userRepository.findAllById(ids).stream().map(BlogUserDetailsMapper.mapUser).toList();
     }
 
     public UserModel getUserEntityByHandle(String handle) {

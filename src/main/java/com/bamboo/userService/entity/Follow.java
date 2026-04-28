@@ -21,10 +21,10 @@ import java.util.UUID;
         uniqueConstraints =
                 @UniqueConstraint(
                         name = "uq_follower_following",
-                        columnNames = {"followerId", "followingId"}),
+                        columnNames = {"follower_id", "following_id"}),
         indexes = {
-            @Index(name = "ix_followers_follower", columnList = "followerId"),
-            @Index(name = "ix_followers_following", columnList = "followingId")
+            @Index(name = "ix_followers_follower", columnList = "follower_id"),
+            @Index(name = "ix_followers_following", columnList = "following_id")
         })
 @Data
 @AllArgsConstructor
@@ -33,9 +33,9 @@ import java.util.UUID;
 public class Follow {
     @Id @GeneratedValue private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "follower_id", nullable = false)
     private UUID followerId;
 
-    @Column(nullable = false)
+    @Column(name = "following_id", nullable = false)
     private UUID followingId;
 }

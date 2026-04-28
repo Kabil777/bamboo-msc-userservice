@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +38,11 @@ public class InternalServiceController {
     @GetMapping(value = "/user/{id}")
     public ResponseEntity<BlogMetaDto> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userLookupService.getUserById(id));
+    }
+
+    @PostMapping("/users/lookup")
+    public ResponseEntity<List<BlogMetaDto>> getUsersByIds(@RequestBody List<UUID> ids) {
+        return ResponseEntity.ok(userLookupService.getUsersByIds(ids));
     }
 
     @PostMapping("/user/provision")
